@@ -36,6 +36,7 @@
 // Application dependencies
 #include <GCS_MAVLink/GCS.h>
 #include <AP_SerialManager/AP_SerialManager.h>   // Serial manager library
+#include <AP_MAG/AP_MAG.h>             // MAG
 #include <AP_GPS/AP_GPS.h>             // ArduPilot GPS library
 #include <DataFlash/DataFlash.h>          // ArduPilot Mega Flash Memory Library
 #include <AP_Baro/AP_Baro.h>
@@ -229,6 +230,7 @@ private:
     // Dataflash
     DataFlash_Class DataFlash;
 
+    AP_MAG apmag;
     AP_GPS gps;
 
     // flight modes convenience array
@@ -667,6 +669,7 @@ private:
     void rc_loop();
     void throttle_loop();
     void update_batt_compass(void);
+    void update_MAG(void);
     void fourhundred_hz_logging();
     void ten_hz_logging_loop();
     void twentyfive_hz_logging();

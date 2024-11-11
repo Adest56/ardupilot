@@ -129,6 +129,7 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
 #endif
     SCHED_TASK_CLASS(AP_Notify,            &copter.notify,              update,          50,  90),
     SCHED_TASK(one_hz_loop,            1,    100),
+    SCHED_TASK(update_MAG,            10,    100),
     SCHED_TASK(ekf_check,             10,     75),
     SCHED_TASK(gpsglitch_check,       10,     50),
     SCHED_TASK(landinggear_update,    10,     75),
@@ -451,6 +452,38 @@ void Copter::one_hz_loop()
     // indicates that the sensor or subsystem is present but not
     // functioning correctly
     update_sensor_status_flags();
+
+    ///////////////////////////////////////////mag
+    int32_t liTemp[3];
+	float lfValueX = 0, lfValueY = 0, lfValueZ = 0, lfValueF = 0;
+    liTemp[0] = apmag.lucDC[0] + (apmag.lucDC[1] << 8) + (apmag.lucDC[2] << 16);
+    liTemp[1] = apmag.lucDC[3] + (apmag.lucDC[4] << 8) + (apmag.lucDC[5] << 16);
+    liTemp[2] = apmag.lucDC[6] + (apmag.lucDC[7] << 8) + (apmag.lucDC[8] << 16);
+    if(liTemp[0] & 0x800000)
+    {
+        liTemp[0] |= 0xff000000;
+    }
+    if(liTemp[1] & 0x800000)
+    {
+        liTemp[1] |= 0xff000000;
+    }
+    if(liTemp[2] & 0x800000)
+    {
+        liTemp[2] |= 0xff000000;
+    }
+    lfValueX = liTemp[0] * 0.011920929;
+    lfValueY = liTemp[1] * 0.011920929;
+    lfValueZ = liTemp[2] * 0.011920929;
+    lfValueF = sqrt((lfValueX*lfValueX) + (lfValueY*lfValueY) + (lfValueZ*lfValueZ));
+    gcs().send_text(MAV_SEVERITY_WARNING, "X:%f,Y:%f,Z:%f,F:%f",lfValueX,lfValueY,lfValueZ,lfValueF);
+}
+
+void Copter::update_MAG(void)
+{
+    
+    static uint32_t last_mag_new_data_ms = 0;
+    if (apmag.update()) {
+    }
 }
 
 // called at 50hz

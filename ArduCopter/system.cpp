@@ -158,6 +158,8 @@ void Copter::init_ardupilot()
     gps.set_log_gps_bit(MASK_LOG_GPS);
     gps.init(serial_manager);
 
+    apmag.init(serial_manager);
+
     init_compass();
 
 #if OPTFLOW == ENABLED
