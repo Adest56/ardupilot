@@ -460,7 +460,7 @@ void Copter::one_hz_loop()
 void Copter::update_MAG(void)
 {
     
-    static uint32_t last_mag_new_data_ms = 0;
+    //static uint32_t last_mag_new_data_ms = 0;
     if (apmag.update()) {
         Log_Write_Mag();
     }
