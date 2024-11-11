@@ -71,7 +71,7 @@ bool AP_MAG::update()
 
     int16_t numc = _port->available();
     uint8_t data;
-    uint8_t checksum = 0;
+    uint8_t checksum;
 
     for (int16_t i = 0; i< numc; i++)
     {
