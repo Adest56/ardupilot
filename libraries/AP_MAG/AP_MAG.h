@@ -17,7 +17,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_AHRS/AP_AHRS.h>
 #include <AP_SerialManager/AP_SerialManager.h>
-
+#include <cmath>
 
 class AP_MAG {
 public:
@@ -32,13 +32,9 @@ public:
 
     bool update(void);
 
-    uint32_t mx;
-    uint32_t my;
-    uint32_t mz;
-    uint32_t mf;
+    int32_t liTemp[3];
+	float lfValueX, lfValueY, lfValueZ, lfValueF;
     uint32_t last_frame_ms;
-
-    uint8_t lucDC[10];
     
 
 
@@ -46,9 +42,5 @@ private:
 
     AP_HAL::UARTDriver *_port;                  // UART used to send data to FrSky receiver
     uint8_t _step;
-    uint32_t _mx_temp;
-    uint32_t _my_temp;
-    uint32_t _mz_temp;
-    uint32_t _mf_temp;
-    uint8_t lucDC_temp[10];
+    uint8_t lucDC[10];
 };

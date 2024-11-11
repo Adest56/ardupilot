@@ -69,6 +69,7 @@ struct PACKED log_Optflow {
     float body_y;
 };
 
+
 // Write an optical flow packet
 void Copter::Log_Write_Optflow()
 {
@@ -91,6 +92,32 @@ void Copter::Log_Write_Optflow()
     DataFlash.WriteBlock(&pkt, sizeof(pkt));
  #endif     // OPTFLOW == ENABLED
 }
+
+
+struct PACKED log_Mag {
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    float mx;
+    float my;
+    float mz;
+    float mf;
+};
+
+// Write an optical flow packet
+void Copter::Log_Write_Mag()
+{
+    struct log_Mag pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_MAG_MSG),
+        time_us         : AP_HAL::micros64(),
+        mx          : apmag.lfValueX,
+        my          : apmag.lfValueY,
+        mz          : apmag.lfValueZ,
+        mf          : apmag.lfValueF
+    };
+    DataFlash.WriteBlock(&pkt, sizeof(pkt));
+}
+
+
 
 struct PACKED log_Control_Tuning {
     LOG_PACKET_HEADER;
@@ -503,6 +530,8 @@ const struct LogStructure Copter::log_structure[] = {
     { LOG_OPTFLOW_MSG, sizeof(log_Optflow),
       "OF",   "QBffff",   "TimeUS,Qual,flowX,flowY,bodyX,bodyY", "s-EEEE", "F-0000" },
 #endif
+    { LOG_MAG_MSG, sizeof(log_Mag),
+      "MAG",   "Qffff",   "TimeUS,mX,mY,mZ,mF", "sEEEE", "F0000" },
     { LOG_CONTROL_TUNING_MSG, sizeof(log_Control_Tuning),
       "CTUN", "Qffffffefcfhh", "TimeUS,ThI,ABst,ThO,ThH,DAlt,Alt,BAlt,DSAlt,SAlt,TAlt,DCRt,CRt", "s----mmmmmmnn", "F----00B0BBBB" },
     { LOG_MOTBATT_MSG, sizeof(log_MotBatt),

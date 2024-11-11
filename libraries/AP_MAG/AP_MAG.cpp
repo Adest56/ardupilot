@@ -37,7 +37,14 @@ AP_MAG::AP_MAG(void)
     for (int16_t i = 0; i< 10; i++)
     {
         lucDC[i] = 0;
-        lucDC_temp[i] = 0;
+    }
+    lfValueX= 0;
+    lfValueY= 0;
+    lfValueZ= 0;
+    lfValueF= 0;
+    for (int16_t i = 0; i< 3; i++)
+    {
+        liTemp[i] = 0;
     }
     
 }
@@ -101,10 +108,30 @@ bool AP_MAG::update()
                 {
                     i += 1;
                     data = _port->read();
-                    lucDC_temp[j] = data;
                     // no checksum
                     lucDC[j] = data;
                 }
+                ////////////////////////////
+                liTemp[0] = lucDC[0] + (lucDC[1] << 8) + (lucDC[2] << 16);
+                liTemp[1] = lucDC[3] + (lucDC[4] << 8) + (lucDC[5] << 16);
+                liTemp[2] = lucDC[6] + (lucDC[7] << 8) + (lucDC[8] << 16);
+                if(liTemp[0] & 0x800000)
+                {
+                    liTemp[0] |= 0xff000000;
+                }
+                if(liTemp[1] & 0x800000)
+                {
+                    liTemp[1] |= 0xff000000;
+                }
+                if(liTemp[2] & 0x800000)
+                {
+                    liTemp[2] |= 0xff000000;
+                }
+                lfValueX = liTemp[0] * 0.011920929;
+                lfValueY = liTemp[1] * 0.011920929;
+                lfValueZ = liTemp[2] * 0.011920929;
+                lfValueF = sqrt((lfValueX*lfValueX) + (lfValueY*lfValueY) + (lfValueZ*lfValueZ));
+                ////////////////////////////
                 last_frame_ms = AP_HAL::millis();
                 return true;
             }
