@@ -46,6 +46,9 @@ AP_MAG::AP_MAG(void)
     {
         liTemp[i] = 0;
     }
+    errorlog = 100;
+    errorlog2 = 100;
+    errorlog3 = 5;
     
 }
 
@@ -65,46 +68,71 @@ bool AP_MAG::update()
 {
     
     if (_port == NULL) 
+    {    
         return false;
-
+    }
+    errorlog2 = 99;
+    
+    
     
 
     int16_t numc = _port->available();
+    errorlog2 = numc;
     uint8_t data;
+    
+    errorlog = 99;
     //uint8_t checksum;
 
     for (int16_t i = 0; i< numc; i++)
     {
         data = _port->read();
+        errorlog3 = data;
+        
+        
         switch (_step)
         {
         case 0:
             if(data == 0xFF)
+               {
+                 errorlog = 1;
                 _step = 1;
+                }
             break;
         case 1:
             if(data == 0x7E)
+               {
+                 errorlog = 2;
                 _step = 2;
+                }
             else
                 _step = 0;
+                
             break;
         case 2:
             if(data == 0x01)
+               {
+                 errorlog = 3;
                 _step = 3;
+                }
             else
                 _step = 0;
             break;
         case 3:
             if(data == 0x09)
+               {
+                 errorlog = 4;
                 _step = 4;
+                }
             else
                 _step = 0;
             break;
         case 4:
+            errorlog = 5;
             _step = 0;
             if (i < numc - 10)
             {
-                for (int16_t j = 0; j< 10; j++)
+                lucDC[0] = data;
+                for (int16_t j = 1; j< 10; j++)
                 {
                     i += 1;
                     data = _port->read();
@@ -133,6 +161,8 @@ bool AP_MAG::update()
                 lfValueF = sqrt((lfValueX*lfValueX) + (lfValueY*lfValueY) + (lfValueZ*lfValueZ));
                 ////////////////////////////
                 last_frame_ms = AP_HAL::millis();
+                errorlog2 = 12;
+                
                 return true;
             }
             break;
@@ -141,6 +171,7 @@ bool AP_MAG::update()
             break;
         }
     }
+    
     return false;
 }
 

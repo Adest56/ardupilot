@@ -129,7 +129,7 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
 #endif
     SCHED_TASK_CLASS(AP_Notify,            &copter.notify,              update,          50,  90),
     SCHED_TASK(one_hz_loop,            1,    100),
-    SCHED_TASK(update_MAG,            10,    100),
+    SCHED_TASK(update_MAG,            20,    100),
     SCHED_TASK(ekf_check,             10,     75),
     SCHED_TASK(gpsglitch_check,       10,     50),
     SCHED_TASK(landinggear_update,    10,     75),
@@ -217,7 +217,7 @@ void Copter::loop()
 
 
 // Main loop - 400hz
-void Copter::fast_loop()
+void Copter::fast_imuloop()
 {
     // update INS immediately to get current gyro data populated
     ins.update();
@@ -455,6 +455,7 @@ void Copter::one_hz_loop()
 
     ///////////////////////////////////////////mag
     gcs().send_text(MAV_SEVERITY_WARNING, "X:%f,Y:%f,Z:%f,F:%f",apmag.lfValueX,apmag.lfValueY,apmag.lfValueZ,apmag.lfValueF);
+    //gcs().send_text(MAV_SEVERITY_WARNING, "err:%d,err2:%d,err3:%d",apmag.errorlog,apmag.errorlog2,apmag.errorlog3);
 }
 
 void Copter::update_MAG(void)

@@ -35,6 +35,10 @@ public:
     int32_t liTemp[3];
 	float lfValueX, lfValueY, lfValueZ, lfValueF;
     uint32_t last_frame_ms;
+
+    uint8_t errorlog;
+    uint16_t errorlog2;
+    uint8_t errorlog3;
     
 
 
